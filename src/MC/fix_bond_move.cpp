@@ -198,7 +198,7 @@ void FixBondMove::post_integrate()
 {
   int i,j,ii,jj,m,inum,jnum;
   int inext,iprev,ilast,jnext,jprev,jlast,ibond,iangle,jbond,jangle;
-  int tbondtype,jbondtype,iangletype,inextangletype,jangletype,jnextangletype;
+  int ibondtype,jbondtype,iangletype,inextangletype,jangletype,jnextangletype;
   tagint itag,inexttag,iprevtag,ilasttag,jtag,jnexttag,jprevtag,jlasttag;
   int jjnext, iii;
   tagint i1,i2,i3,j1,j2,j3;
