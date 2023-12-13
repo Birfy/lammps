@@ -45,6 +45,8 @@ action fix_bond_create_angle.cpp
 action fix_bond_create_angle.h
 action fix_bond_create.cpp
 action fix_bond_create.h
+action fix_bond_move.cpp
+action fix_bond_move.h
 action fix_bond_swap.cpp
 action fix_bond_swap.h
 action fix_charge_regulation.cpp
