@@ -38,6 +38,7 @@ class FixBondMove : public Fix {
 
  private:
   double fraction, cutsq;
+  int tbondtype;
   int nmax, tflag;
   int *alist;
   int naccept, threesome;
