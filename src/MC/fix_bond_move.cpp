@@ -330,7 +330,7 @@ void FixBondMove::post_integrate()
 
           if (j >= nlocal || j < 0) continue;
           if ((mask[j] & groupbit) == 0) continue;
-          if (molecule[i] != molecule[j]) continue;
+          // if (molecule[i] != molecule[j]) continue;
 
           int findbond = 0;
           for (int bonded = 0; bonded < num_bond[j]; bonded++) {
