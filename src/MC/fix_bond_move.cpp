@@ -197,7 +197,7 @@ void FixBondMove::init_list(int /*id*/, NeighList *ptr)
 void FixBondMove::post_integrate()
 {
   int i,j,ii,jj,m,inum,jnum;
-  int inext,iprev,ilast,jnext,jprev,jlast,ibond,iangle,jbond,jangle;
+  int inext,iprev,ilast,jnext,jprev,jlast,ibond,iangle,jbond,jangle,inextbond;
   int ibondtype,jbondtype,iangletype,inextangletype,jangletype,jnextangletype;
   tagint itag,inexttag,iprevtag,ilasttag,jtag,jnexttag,jprevtag,jlasttag;
   int jjnext, iii;
@@ -323,27 +323,30 @@ void FixBondMove::post_integrate()
         ibondtype = bond_type[i][ibond];
         if (ibondtype != tbondtype) continue;
 
-        for (jj = 0; jj < jnum; jj++) {
-           j = jlist[permute[jj]];
-           j &= NEIGHMASK;
+        for (inextbond = 0; inextbond < num_bond[inext]; inextbond++) {
+          if (bond_type[inext][inextbond] == ibondtype) continue;
 
-           if (j >= nlocal) continue;
-            int find = 0;
-           for (int bonded = 0; bonded < num_bond[i]; bonded++) {
-            if (bond_atom[i][bonded] == tag[j])
-              find = 1;
+          j = atom->map(bond_atom[inext][inextbond]);
+
+          if (j >= nlocal || j < 0) continue;
+          if ((mask[j] & groupbit) == 0) continue;
+          if (molecule[i] != molecule[j]) continue;
+
+          int findbond = 0;
+          for (int bonded = 0; bonded < num_bond[j]; bonded++) {
+            if (bond_atom[j][bonded] == tag[i])
+              findbond = 1;
           }
+          if (findbond == 1) continue;
 
-          if (find == 1) continue;
-            if ((mask[j] & groupbit) == 0) continue;
-            if (molecule[i] != molecule[j]) continue;
+          if (i == j) continue;
 
-            if (inext == j) continue;
+          if (dist_rsq(i, j) >= cutsq) continue;
 
-            if (dist_rsq(i, j) >= cutsq) continue;
 
-            threesome ++;
-            delta = pair_eng(i, inext) - pair_eng(i, j);
+          threesome++;
+
+          delta = pair_eng(i, inext) - pair_eng(i, j);
             delta += bond_eng(ibondtype, i, j) - bond_eng(ibondtype, i, inext);
 
 
@@ -354,6 +357,7 @@ void FixBondMove::post_integrate()
           }
 
           goto done;
+
         }
       }
     // }
