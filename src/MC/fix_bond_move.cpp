@@ -324,7 +324,7 @@ void FixBondMove::post_integrate()
         if (ibondtype != tbondtype) continue;
 
         for (inextbond = 0; inextbond < num_bond[inext]; inextbond++) {
-          if (bond_type[inext][inextbond] == ibondtype) continue;
+          if (bond_type[inext][inextbond] == tbondtype) continue;
 
           j = atom->map(bond_atom[inext][inextbond]);
 
@@ -346,8 +346,10 @@ void FixBondMove::post_integrate()
 
           threesome++;
 
+          cout<<"i: "<<i<<" j: "<<j<<" inext: "<<inext<<endl;
+
           delta = pair_eng(i, inext) - pair_eng(i, j);
-            delta += bond_eng(ibondtype, i, j) - bond_eng(ibondtype, i, inext);
+          delta += bond_eng(ibondtype, i, j) - bond_eng(ibondtype, i, inext);
 
 
           if (delta < 0.0) accept = 1;
