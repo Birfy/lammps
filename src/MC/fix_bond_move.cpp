@@ -346,8 +346,6 @@ void FixBondMove::post_integrate()
 
           threesome++;
 
-          cout<<"i: "<<i<<" j: "<<j<<" inext: "<<inext<<endl;
-
           delta = pair_eng(i, inext) - pair_eng(i, j);
           delta += bond_eng(ibondtype, i, j) - bond_eng(ibondtype, i, inext);
 
