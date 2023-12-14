@@ -409,8 +409,8 @@ void FixBondMove::post_integrate()
       // if (n_histories > 0)
       //   for (auto &ihistory: histories)
       //     dynamic_cast<FixBondHistory *>(ihistory)->delete_history(jnext,jbond);
-      bond_atom[j][num_bond[i]] = tag[i];
-      bond_type[j][num_bond[i]] = ibondtype;
+      bond_atom[j][num_bond[j]] = tag[i];
+      bond_type[j][num_bond[j]] = ibondtype;
       num_bond[j]++;
     }
 
@@ -429,11 +429,11 @@ void FixBondMove::post_integrate()
     if (special[i][m] == inexttag)
         special[i][m] = jtag;
     
-  for (m = 0; m < nspecial[j][0]; m++)
-    if (special[j][m] == jnexttag) {
-      special[j][nspecial[j][0]] = itag;
-      nspecial[j][0]++;
-    } 
+  // for (m = 0; m < nspecial[j][0]; m++)
+  //   if (special[j][m] == itag) {
+    special[j][nspecial[j][0]] = itag;
+    nspecial[j][0]++;
+    // } 
   for (m = 0; m < nspecial[inext][0]; m++)
     if (special[inext][m] == itag) {
       for (iii = m; iii < nspecial[inext][0] - 1; iii++)
