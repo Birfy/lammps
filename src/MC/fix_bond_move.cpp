@@ -328,7 +328,7 @@ void FixBondMove::post_integrate()
            j &= NEIGHMASK;
 
            if (j >= nlocal) continue;
-           
+
            for (int bonded = 0; bonded < num_bond[i]; bonded++) {
             if (bond_atom[i][bonded] == tag[j]) continue;
           }
@@ -409,15 +409,15 @@ void FixBondMove::post_integrate()
   //     bond_type[i][num_bond[i]] = ibondtype;
   //     num_bond[i]++;
   //   }
-  for (jbond = 0; jbond < num_bond[j]; jbond++)
-    if (bond_atom[j][jbond] == tag[i]) {
+  // for (jbond = 0; jbond < num_bond[j]; jbond++) {
+    // if (bond_atom[j][jbond] == tag[i]) {
       // if (n_histories > 0)
       //   for (auto &ihistory: histories)
       //     dynamic_cast<FixBondHistory *>(ihistory)->delete_history(jnext,jbond);
       bond_atom[j][num_bond[j]] = tag[i];
       bond_type[j][num_bond[j]] = ibondtype;
       num_bond[j]++;
-    }
+    // }
 
   // set global tags of 4 atoms in bonds
 
