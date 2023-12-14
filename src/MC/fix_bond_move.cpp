@@ -326,6 +326,11 @@ void FixBondMove::post_integrate()
         for (jj = 0; jj < jnum; jj++) {
            j = jlist[permute[jj]];
            j &= NEIGHMASK;
+
+          for (int bonded = 0; bonded < num_bond[i]; bonded++) {
+            if (bond_atom[i][bonded] == j) continue;
+          }
+
            if (j >= nlocal) continue;
             if ((mask[j] & groupbit) == 0) continue;
             if (molecule[i] != molecule[j]) continue;
