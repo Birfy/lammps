@@ -156,12 +156,12 @@ void FixBondMove::init()
   if (force->pair->single_enable == 0)
     error->all(FLERR,"Pair style does not support fix bond/move");
 
-  if (force->angle == nullptr && atom->nangles > 0 && comm->me == 0)
-    error->warning(FLERR,"Fix bond/move will not preserve correct angle "
-                   "topology because no angle_style is defined");
+  // if (force->angle == nullptr && atom->nangles > 0 && comm->me == 0)
+  //   error->warning(FLERR,"Fix bond/move will not preserve correct angle "
+  //                  "topology because no angle_style is defined");
 
-  if (force->dihedral || force->improper)
-    error->all(FLERR,"Fix bond/move cannot use dihedral or improper styles");
+  if (force->angle || force->dihedral || force->improper)
+    error->all(FLERR,"Fix bond/move cannot use angle, dihedral or improper styles");
 
   if (force->special_lj[1] != 0.0 || force->special_lj[2] != 1.0 ||
       force->special_lj[3] != 1.0)
@@ -328,10 +328,13 @@ void FixBondMove::post_integrate()
            j &= NEIGHMASK;
 
            if (j >= nlocal) continue;
-
+            int find = 0;
            for (int bonded = 0; bonded < num_bond[i]; bonded++) {
-            if (bond_atom[i][bonded] == tag[j]) continue;
+            if (bond_atom[i][bonded] == tag[j])
+              find = 1;
           }
+
+          if (find == 1) continue;
             if ((mask[j] & groupbit) == 0) continue;
             if (molecule[i] != molecule[j]) continue;
 
