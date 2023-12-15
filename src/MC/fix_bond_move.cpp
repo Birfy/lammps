@@ -360,60 +360,60 @@ void FixBondMove::post_integrate()
 
   // trigger immediate reneighboring if swaps occurred on one or more procs
 
-  // int accept_any;
-  // MPI_Allreduce(&accept,&accept_any,1,MPI_INT,MPI_SUM,world);
-  // if (accept_any) next_reneighbor = update->ntimestep;
+  int accept_any;
+  MPI_Allreduce(&accept,&accept_any,1,MPI_INT,MPI_SUM,world);
+  if (accept_any) next_reneighbor = update->ntimestep;
 
-  // if (!accept) return;
-  // naccept++;
+  if (!accept) return;
+  naccept++;
 
-  // error->warning(FLERR,"Attemping to move the following bonds");
-  // error->warning(FLERR,std::to_string(i));
-  // error->warning(FLERR,std::to_string(num_bond[i]));
-  // error->warning(FLERR,std::to_string(bond_atom[i][0]));
-  // error->warning(FLERR,std::to_string(inext));
-  // error->warning(FLERR,std::to_string(num_bond[inext]));
-  // error->warning(FLERR,std::to_string(bond_atom[inext][0]));
-  // error->warning(FLERR,std::to_string(j));
-  // error->warning(FLERR,std::to_string(num_bond[j]));
-  // error->warning(FLERR,std::to_string(bond_atom[j][0]));
+  error->warning(FLERR,"Attemping to move the following bonds");
+  error->warning(FLERR,std::to_string(i));
+  error->warning(FLERR,std::to_string(num_bond[i]));
+  error->warning(FLERR,std::to_string(bond_atom[i][0]));
+  error->warning(FLERR,std::to_string(inext));
+  error->warning(FLERR,std::to_string(num_bond[inext]));
+  error->warning(FLERR,std::to_string(bond_atom[inext][0]));
+  error->warning(FLERR,std::to_string(j));
+  error->warning(FLERR,std::to_string(num_bond[j]));
+  error->warning(FLERR,std::to_string(bond_atom[j][0]));
 
-  // // find instances of bond/history to reset history
-  // auto histories = modify->get_fix_by_style("BOND_HISTORY");
-  // int n_histories = histories.size();
+  // find instances of bond/history to reset history
+  auto histories = modify->get_fix_by_style("BOND_HISTORY");
+  int n_histories = histories.size();
 
-  // // change bond partners of affected atoms
-  // // on atom i: bond i-inext changes to i-jnext
-  // // on atom j: bond j-jnext changes to j-inext
-  // // on atom inext: bond inext-i changes to inext-j
-  // // on atom jnext: bond jnext-j changes to jnext-i
+  // change bond partners of affected atoms
+  // on atom i: bond i-inext changes to i-jnext
+  // on atom j: bond j-jnext changes to j-inext
+  // on atom inext: bond inext-i changes to inext-j
+  // on atom jnext: bond jnext-j changes to jnext-i
 
-  // if (bondloc == 0) {
-  //   for (ibond = 0; ibond < num_bond[i]; ibond++)
-  //   if (bond_atom[i][ibond] == tag[inext]) {
-  //     if (n_histories > 0)
-  //       for (auto &ihistory: histories)
-  //         dynamic_cast<FixBondHistory *>(ihistory)->delete_history(i,ibond);
-  //     bond_atom[i][ibond] = tag[j];
-  //   }
-  // } else {
-  //   bond_atom[i][num_bond[i]] = tag[j];
-  //   bond_type[i][num_bond[i]] = tbondtype;
-  //   num_bond[i]++;
+  if (bondloc == 0) {
+    for (ibond = 0; ibond < num_bond[i]; ibond++)
+    if (bond_atom[i][ibond] == tag[inext]) {
+      if (n_histories > 0)
+        for (auto &ihistory: histories)
+          dynamic_cast<FixBondHistory *>(ihistory)->delete_history(i,ibond);
+      bond_atom[i][ibond] = tag[j];
+    }
+  } else {
+    bond_atom[i][num_bond[i]] = tag[j];
+    bond_type[i][num_bond[i]] = tbondtype;
+    num_bond[i]++;
 
-  //   for (ibond = 0; ibond < num_bond[inext]; ibond++) {
-  //     if (bond_atom[inext][ibond] == tag[i]) {
-  //       if (n_histories > 0)
-  //         for (auto &ihistory: histories)
-  //           dynamic_cast<FixBondHistory *>(ihistory)->delete_history(inext,ibond);
-  //       for (iii = ibond; iii < num_bond[inext] - 1; iii++) {
-  //         bond_atom[inext][iii] = bond_atom[inext][iii+1];
-  //         bond_type[inext][iii] = bond_type[inext][iii+1];
-  //       }
-  //       num_bond[inext]--;
-  //     }
-  //   }
-  // }
+    for (ibond = 0; ibond < num_bond[inext]; ibond++) {
+      if (bond_atom[inext][ibond] == tag[i]) {
+        if (n_histories > 0)
+          for (auto &ihistory: histories)
+            dynamic_cast<FixBondHistory *>(ihistory)->delete_history(inext,ibond);
+        for (iii = ibond; iii < num_bond[inext] - 1; iii++) {
+          bond_atom[inext][iii] = bond_atom[inext][iii+1];
+          bond_type[inext][iii] = bond_type[inext][iii+1];
+        }
+        num_bond[inext]--;
+      }
+    }
+  }
 
   
 
@@ -487,29 +487,29 @@ void FixBondMove::post_integrate()
 
   // set global tags of 4 atoms in bonds
 
-  // itag = tag[i];
-  // inexttag = tag[inext];
-  // jtag = tag[j];
+  itag = tag[i];
+  inexttag = tag[inext];
+  jtag = tag[j];
 
-  // // change 1st special neighbors of affected atoms: i,j,inext,jnext
-  // // don't need to change 2nd/3rd special neighbors for any atom
-  // //   since special bonds = 0 1 1 means they are never used
+  // change 1st special neighbors of affected atoms: i,j,inext,jnext
+  // don't need to change 2nd/3rd special neighbors for any atom
+  //   since special bonds = 0 1 1 means they are never used
 
-  // for (m = 0; m < nspecial[i][0]; m++)
-  //   if (special[i][m] == inexttag)
-  //       special[i][m] = jtag;
+  for (m = 0; m < nspecial[i][0]; m++)
+    if (special[i][m] == inexttag)
+        special[i][m] = jtag;
     
-  // // for (m = 0; m < nspecial[j][0]; m++)
-  // //   if (special[j][m] == itag) {
-  //   special[j][nspecial[j][0]] = itag;
-  //   nspecial[j][0]++;
-  //   // } 
-  // for (m = 0; m < nspecial[inext][0]; m++)
-  //   if (special[inext][m] == itag) {
-  //     for (iii = m; iii < nspecial[inext][0] - 1; iii++)
-  //       special[inext][iii] = special[inext][iii+1];
-  //     nspecial[inext][0]--;
-  //   }
+  // for (m = 0; m < nspecial[j][0]; m++)
+  //   if (special[j][m] == itag) {
+    special[j][nspecial[j][0]] = itag;
+    nspecial[j][0]++;
+    // } 
+  for (m = 0; m < nspecial[inext][0]; m++)
+    if (special[inext][m] == itag) {
+      for (iii = m; iii < nspecial[inext][0] - 1; iii++)
+        special[inext][iii] = special[inext][iii+1];
+      nspecial[inext][0]--;
+    }
     
   
 }
