@@ -358,8 +358,7 @@ void FixBondMove::post_integrate()
           }
 
           goto done;
-
-          printf("i = %d, j = %d, inext = %d\n", i, j, inext);
+          error->warning(FLERR,std::format("Fix bond/move: moving bond {}-{} to {}-{} ",tag[i],tag[inext],tag[i],tag[j]));
 
         }
       }
