@@ -358,7 +358,7 @@ void FixBondMove::post_integrate()
             if (random->uniform() < factor) accept = 1;
           }
 
-          error->warning(FLERR,format("Fix bond/move: moving bond {}-{} to {}-{} ",tag[i],tag[inext],tag[i],tag[j]));
+          error->warning(FLERR,std::format("Fix bond/move: moving bond {}-{} to {}-{} ",tag[i],tag[inext],tag[i],tag[j]));
 
           goto done;
           
