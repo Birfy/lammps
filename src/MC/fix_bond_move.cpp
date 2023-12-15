@@ -377,16 +377,16 @@ void FixBondMove::post_integrate()
   if (!accept) return;
   naccept++;
 
-  // error->warning(FLERR,"Attemping to move the following bonds");
-  // error->warning(FLERR,std::to_string(i));
-  // error->warning(FLERR,std::to_string(num_bond[i]));
-  // error->warning(FLERR,std::to_string(bond_atom[i][0]));
-  // error->warning(FLERR,std::to_string(inext));
-  // error->warning(FLERR,std::to_string(num_bond[inext]));
-  // error->warning(FLERR,std::to_string(bond_atom[inext][0]));
-  // error->warning(FLERR,std::to_string(j));
-  // error->warning(FLERR,std::to_string(num_bond[j]));
-  // error->warning(FLERR,std::to_string(bond_atom[j][0]));
+  error->warning(FLERR,"Attemping to move the following bonds");
+  error->warning(FLERR,std::to_string(i));
+  error->warning(FLERR,std::to_string(num_bond[i]));
+  error->warning(FLERR,std::to_string(bond_atom[i][0]));
+  error->warning(FLERR,std::to_string(inext));
+  error->warning(FLERR,std::to_string(num_bond[inext]));
+  error->warning(FLERR,std::to_string(bond_atom[inext][0]));
+  error->warning(FLERR,std::to_string(j));
+  error->warning(FLERR,std::to_string(num_bond[j]));
+  error->warning(FLERR,std::to_string(bond_atom[j][0]));
 
   // find instances of bond/history to reset history
   auto histories = modify->get_fix_by_style("BOND_HISTORY");
