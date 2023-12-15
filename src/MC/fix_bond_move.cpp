@@ -36,6 +36,7 @@
 #include <cstring>
 #include <stdio.h>
 
+using namespace std;
 using namespace LAMMPS_NS;
 using namespace FixConst;
 
@@ -357,8 +358,10 @@ void FixBondMove::post_integrate()
             if (random->uniform() < factor) accept = 1;
           }
 
+          error->warning(FLERR,format("Fix bond/move: moving bond {}-{} to {}-{} ",tag[i],tag[inext],tag[i],tag[j]));
+
           goto done;
-          error->warning(FLERR,std::format("Fix bond/move: moving bond {}-{} to {}-{} ",tag[i],tag[inext],tag[i],tag[j]));
+          
 
         }
       }
