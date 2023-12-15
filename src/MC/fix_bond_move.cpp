@@ -397,6 +397,9 @@ void FixBondMove::post_integrate()
       if (n_histories > 0)
         for (auto &ihistory: histories)
           dynamic_cast<FixBondHistory *>(ihistory)->delete_history(i,ibond);
+      error->warning(FLERR,"Bond change from to ");
+      error->warning(FLERR,std::to_string(tag[inext]));
+      error->warning(FLERR,std::to_string(tag[j]));
       bond_atom[i][ibond] = tag[j];
     }
   for (jbond = 0; jbond < num_bond[inext]; jbond++)
