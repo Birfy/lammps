@@ -316,20 +316,20 @@ void FixBondMove::post_integrate()
           if (molecule[i] != molecule[inext]) continue;
 
           bondloc = 1;
-          for (ibond = 0; ibond < numbond[i]; ibond++) {
+          for (ibond = 0; ibond < num_bond[i]; ibond++) {
             if (bond_atom[i][ibond] == tag[inext])
               bondloc = 0;
           }
 
           int findbond = 0;
-          for (ibond = 0; ibond < numbond[i]; ibond++) {
+          for (ibond = 0; ibond < num_bond[i]; ibond++) {
             if (bond_atom[i][ibond] == tag[j])
               findbond = 1;
           }
           if (findbond == 1) continue;
 
           findbond = 0;
-          for (ibond = 0; ibond < numbond[j]; ibond++) {
+          for (ibond = 0; ibond < num_bond[j]; ibond++) {
             if (bond_atom[j][ibond] == tag[i])
               findbond = 1;
           }
