@@ -34,8 +34,7 @@
 
 #include <cmath>
 #include <cstring>
-#include <iostream>
-using namespace std;
+#include <stdio.h>
 
 using namespace LAMMPS_NS;
 using namespace FixConst;
@@ -360,7 +359,7 @@ void FixBondMove::post_integrate()
 
           goto done;
 
-          cout<<i<<j<<inext;
+          printf("i = %d, j = %d, inext = %d\n", i, j, inext);
 
         }
       }
