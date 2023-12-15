@@ -432,9 +432,9 @@ void FixBondMove::post_integrate()
       // if (n_histories > 0)
       //   for (auto &ihistory: histories)
       //     dynamic_cast<FixBondHistory *>(ihistory)->delete_history(jnext,jbond);
-      // bond_atom[j][num_bond[j]] = tag[i];
-      // bond_type[j][num_bond[j]] = ibondtype;
-      // num_bond[j]++;
+      bond_atom[j][num_bond[j]] = tag[i];
+      bond_type[j][num_bond[j]] = ibondtype;
+      num_bond[j]++;
     // }
 
   // set global tags of 4 atoms in bonds
