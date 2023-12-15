@@ -402,39 +402,23 @@ void FixBondMove::post_integrate()
       error->warning(FLERR,std::to_string(tag[j]));
       bond_atom[i][ibond] = tag[j];
     }
-  // for (jbond = 0; jbond < num_bond[inext]; jbond++)
-  //   if (bond_atom[inext][jbond] == tag[i]) {
-  //     for (jjnext = jbond; jjnext < num_bond[inext] - 1; jjnext++){
-  //       bond_atom[inext][jjnext] = bond_atom[inext][jjnext+1];
-  //       bond_type[inext][jjnext] = bond_type[inext][jjnext+1];
-  //     }
+  for (jbond = 0; jbond < num_bond[inext]; jbond++)
+    if (bond_atom[inext][jbond] == tag[i]) {
+      for (jjnext = jbond; jjnext < num_bond[inext] - 1; jjnext++){
+        bond_atom[inext][jjnext] = bond_atom[inext][jjnext+1];
+        bond_type[inext][jjnext] = bond_type[inext][jjnext+1];
+      }
       
-  //     if (n_histories > 0)
-  //       for (auto &ihistory: histories)
-  //         dynamic_cast<FixBondHistory *>(ihistory)->delete_history(inext,jbond);
+      if (n_histories > 0)
+        for (auto &ihistory: histories)
+          dynamic_cast<FixBondHistory *>(ihistory)->delete_history(inext,jbond);
 
-  //     // bond_atom[j][jbond] = tag[inext];
-  //     // bond_type[j][jbond] = ibondtype;
-  //     num_bond[inext]--;
-  //   }
+      num_bond[inext]--;
+    }
 
-  // for (ibond = 0; ibond < num_bond[i]; ibond++)
-  //   if (bond_atom[i][ibond] == tag[j]) {
-  //     // if (n_histories > 0)
-  //     //   for (auto &ihistory: histories)
-  //     //     dynamic_cast<FixBondHistory *>(ihistory)->delete_history(inext,ibond);
-  //     bond_atom[i][num_bond[i]] = tag[j];
-  //     bond_type[i][num_bond[i]] = ibondtype;
-  //     num_bond[i]++;
-  //   }
-  // for (jbond = 0; jbond < num_bond[j]; jbond++) {
-    // if (bond_atom[j][jbond] == tag[i]) {
-      // if (n_histories > 0)
-      //   for (auto &ihistory: histories)
-      //     dynamic_cast<FixBondHistory *>(ihistory)->delete_history(jnext,jbond);
-      bond_atom[j][num_bond[j]] = tag[i];
-      bond_type[j][num_bond[j]] = ibondtype;
-      num_bond[j]++;
+      // bond_atom[j][num_bond[j]] = tag[i];
+      // bond_type[j][num_bond[j]] = ibondtype;
+      // num_bond[j]++;
     // }
 
   // set global tags of 4 atoms in bonds
