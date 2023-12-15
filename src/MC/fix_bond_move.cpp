@@ -358,6 +358,8 @@ void FixBondMove::post_integrate()
 
           goto done;
 
+          cout<<i<<j<<inext;
+
         }
       }
     // }
