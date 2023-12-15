@@ -400,9 +400,9 @@ void FixBondMove::post_integrate()
 
   for (ibond = 0; ibond < num_bond[i]; ibond++)
     if (bond_atom[i][ibond] == tag[inext]) {
-      // if (n_histories > 0)
-      //   for (auto &ihistory: histories)
-      //     dynamic_cast<FixBondHistory *>(ihistory)->delete_history(i,ibond);
+      if (n_histories > 0)
+        for (auto &ihistory: histories)
+          dynamic_cast<FixBondHistory *>(ihistory)->delete_history(i,ibond);
       bond_atom[i][ibond] = tag[j];
     }
 
