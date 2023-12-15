@@ -379,8 +379,11 @@ void FixBondMove::post_integrate()
 
   error->warning(FLERR,"Attemping to move the following bonds");
   error->warning(FLERR,std::to_string(i));
+  error->warning(FLERR,std::to_string(num_bond[i]));
   error->warning(FLERR,std::to_string(inext));
+  error->warning(FLERR,std::to_string(num_bond[inext]));
   error->warning(FLERR,std::to_string(j));
+  error->warning(FLERR,std::to_string(num_bond[j]));
 
   // find instances of bond/history to reset history
   auto histories = modify->get_fix_by_style("BOND_HISTORY");
@@ -402,6 +405,14 @@ void FixBondMove::post_integrate()
       error->warning(FLERR,std::to_string(tag[j]));
       bond_atom[i][ibond] = tag[j];
     }
+
+    error->warning(FLERR,"Attemping to move the following bonds");
+  error->warning(FLERR,std::to_string(i));
+  error->warning(FLERR,std::to_string(num_bond[i]));
+  error->warning(FLERR,std::to_string(inext));
+  error->warning(FLERR,std::to_string(num_bond[inext]));
+  error->warning(FLERR,std::to_string(j));
+  error->warning(FLERR,std::to_string(num_bond[j]));
   for (jbond = 0; jbond < num_bond[inext]; jbond++)
     if (bond_atom[inext][jbond] == tag[i]) {
       for (jjnext = jbond; jjnext < num_bond[inext] - 1; jjnext++){
@@ -416,11 +427,19 @@ void FixBondMove::post_integrate()
       num_bond[inext]--;
     }
 
+error->warning(FLERR,"Attemping to move the following bonds");
+  error->warning(FLERR,std::to_string(i));
+  error->warning(FLERR,std::to_string(num_bond[i]));
+  error->warning(FLERR,std::to_string(inext));
+  error->warning(FLERR,std::to_string(num_bond[inext]));
+  error->warning(FLERR,std::to_string(j));
+  error->warning(FLERR,std::to_string(num_bond[j]));
+
     
-    error->warning(FLERR,"Attemping to move the following bonds");
-      error->warning(FLERR,std::to_string(i));
-      error->warning(FLERR,std::to_string(inext));
-      error->warning(FLERR,std::to_string(j));
+    // error->warning(FLERR,"Attemping to move the following bonds");
+    //   error->warning(FLERR,std::to_string(i));
+    //   error->warning(FLERR,std::to_string(inext));
+    //   error->warning(FLERR,std::to_string(j));
       // error->warning(FLERR,std::to_string(x[j]));
       // error->warning(FLERR,std::to_string(y[j]));
       // error->warning(FLERR,std::to_string(z[j]));
@@ -430,9 +449,17 @@ void FixBondMove::post_integrate()
       //   error->warning(FLERR,std::to_string(bond_type[j][testindex]));
       // }
 
-      // bond_atom[j][num_bond[j]] = tag[i];
-      // bond_type[j][num_bond[j]] = ibondtype;
-      // num_bond[j]++;
+      bond_atom[j][num_bond[j]] = tag[i];
+      bond_type[j][num_bond[j]] = ibondtype;
+      num_bond[j]++;
+
+      error->warning(FLERR,"Attemping to move the following bonds");
+  error->warning(FLERR,std::to_string(i));
+  error->warning(FLERR,std::to_string(num_bond[i]));
+  error->warning(FLERR,std::to_string(inext));
+  error->warning(FLERR,std::to_string(num_bond[inext]));
+  error->warning(FLERR,std::to_string(j));
+  error->warning(FLERR,std::to_string(num_bond[j]));
 
       // error->warning(FLERR,std::to_string(num_bond[j]));
       // for (int testindex = 0; testindex < num_bond[j]; testindex++){
