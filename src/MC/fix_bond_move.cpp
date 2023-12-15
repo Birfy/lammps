@@ -358,12 +358,6 @@ void FixBondMove::post_integrate()
             if (random->uniform() < factor) accept = 1;
           }
 
-          error->warning(FLERR,"Attemping to move the following bonds");
-          error->warning(FLERR,std::to_string(i));
-          error->warning(FLERR,std::to_string(inext));
-          error->warning(FLERR,std::to_string(j));
-        
-
           goto done;
           
 
@@ -382,6 +376,11 @@ void FixBondMove::post_integrate()
 
   if (!accept) return;
   naccept++;
+
+  error->warning(FLERR,"Attemping to move the following bonds");
+  error->warning(FLERR,std::to_string(i));
+  error->warning(FLERR,std::to_string(inext));
+  error->warning(FLERR,std::to_string(j));
 
   // find instances of bond/history to reset history
   auto histories = modify->get_fix_by_style("BOND_HISTORY");
