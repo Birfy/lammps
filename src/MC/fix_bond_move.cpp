@@ -198,7 +198,8 @@ void FixBondMove::init_list(int /*id*/, NeighList *ptr)
 
 void FixBondMove::post_integrate()
 {
-  int i,j,ii,jj,m,inum,jnum;
+  int i,j,ii,jj,kk,m,inum,jnum;
+  int bondloc;
   int inext,iprev,ilast,jnext,jprev,jlast,ibond,iangle,jbond,jangle,inextbond;
   int ibondtype,jbondtype,iangletype,inextangletype,jangletype,jnextangletype;
   tagint itag,inexttag,iprevtag,ilasttag,jtag,jnexttag,jprevtag,jlasttag;
@@ -298,53 +299,45 @@ void FixBondMove::post_integrate()
 
     neighbor_permutation(jnum);
 
-    // for (jj = 0; jj < jnum; jj++) {
-    //   j = jlist[permute[jj]];
-    //   j &= NEIGHMASK;
-    //   if (j >= nlocal) continue;
-    //   if ((mask[j] & groupbit) == 0) continue;
-    //   if (molecule[i] != molecule[j]) continue;
+    for (jj = 0; jj < jnum; jj++) {
+      j = jlist[permute[jj]];
+      j &= NEIGHMASK;
+      if (j >= nlocal) continue;
+      if ((mask[j] & groupbit) == 0) continue;
 
-      // loop over all bond partners of atoms I and J
-      // use num_bond for this, not special list, so also have bondtypes
-      // inext,jnext = atoms bonded to I,J
-      // inext,jnext must be on-processor (inext,jnext < nlocal)
-      // inext,jnext must be in fix group
-      // inext,jnext must have same molecule IDs
-      //   in use cases above ...
-      //   for case 1: this ensures chain length is preserved
-      //   for case 2: always satisfied b/c fix group = bond-able atoms
-      // 4 atoms must be unique (no duplicates): inext != jnext, inext != j
-      //   already know i != inext, j != jnext
-      // all 4 old and new bonds must have length < cutoff
+      for (kk = 0; kk < jnum; kk++) {
+          inext = jlist[permute[kk]];
+          inext &= NEIGHMASK;
+          
+          if (j == inext) continue;
+          
+          if (inext >= nlocal) continue;
+          if ((mask[inext] & groupbit) == 0) continue;
+          if (molecule[i] != molecule[inext]) continue;
 
-      for (ibond = 0; ibond < num_bond[i]; ibond++) {
-        inext = atom->map(bond_atom[i][ibond]);
-        if (inext >= nlocal || inext < 0) continue;
-        if ((mask[inext] & groupbit) == 0) continue;
-        ibondtype = bond_type[i][ibond];
-        if (ibondtype != tbondtype) continue;
-
-        for (inextbond = 0; inextbond < num_bond[inext]; inextbond++) {
-          if (bond_type[inext][inextbond] == tbondtype) continue;
-
-          j = atom->map(bond_atom[inext][inextbond]);
-
-          if (j >= nlocal || j < 0) continue;
-          if ((mask[j] & groupbit) == 0) continue;
-          // if (molecule[i] != molecule[j]) continue;
+          bondloc = 1;
+          for (ibond = 0; ibond < numbond[i]; ibond++) {
+            if (bond_atom[i][ibond] == tag[inext])
+              bondloc = 0;
+          }
 
           int findbond = 0;
-          for (int bonded = 0; bonded < num_bond[j]; bonded++) {
-            if (bond_atom[j][bonded] == tag[i])
+          for (ibond = 0; ibond < numbond[i]; ibond++) {
+            if (bond_atom[i][ibond] == tag[j])
               findbond = 1;
           }
           if (findbond == 1) continue;
 
-          if (i == j) continue;
+          findbond = 0;
+          for (ibond = 0; ibond < numbond[j]; ibond++) {
+            if (bond_atom[j][ibond] == tag[i])
+              findbond = 1;
+          }
+          if (findbond == 1) continue;
 
+          if (dist_rsq(i, inext) >= cutsq) continue;
           if (dist_rsq(i, j) >= cutsq) continue;
-
+          if (dist_rsq(j, inext) >= cutsq) continue;
 
           threesome++;
 
@@ -359,11 +352,8 @@ void FixBondMove::post_integrate()
           }
 
           goto done;
-          
-
-        }
       }
-    // }
+    }
   }
 
  done:
@@ -398,13 +388,34 @@ void FixBondMove::post_integrate()
   // on atom inext: bond inext-i changes to inext-j
   // on atom jnext: bond jnext-j changes to jnext-i
 
-  for (ibond = 0; ibond < num_bond[i]; ibond++)
+  if (bondloc == 0) {
+    for (ibond = 0; ibond < num_bond[i]; ibond++)
     if (bond_atom[i][ibond] == tag[inext]) {
       if (n_histories > 0)
         for (auto &ihistory: histories)
           dynamic_cast<FixBondHistory *>(ihistory)->delete_history(i,ibond);
       bond_atom[i][ibond] = tag[j];
     }
+  } else {
+    bond_atom[i][num_bond[i]] = tag[j];
+    bond_type[i][num_bond[i]] = tbondtype;
+    num_bond[i]++;
+
+    for (ibond = 0; ibond < num_bond[inext]; ibond++) {
+      if (bond_atom[inext][ibond] == tag[i]) {
+        if (n_histories > 0)
+          for (auto &ihistory: histories)
+            dynamic_cast<FixBondHistory *>(ihistory)->delete_history(inext,ibond);
+        for (iii = ibond; iii < num_bond[inext] - 1; iii++) {
+          bond_atom[inext][iii] = bond_atom[inext][iii+1];
+          bond_type[inext][iii] = bond_type[inext][iii+1];
+        }
+        num_bond[inext]--;
+      }
+    }
+  }
+
+  
 
 //     error->warning(FLERR,"Attemping to move the following bonds");
 //   error->warning(FLERR,std::to_string(i));
@@ -478,7 +489,6 @@ void FixBondMove::post_integrate()
 
   itag = tag[i];
   inexttag = tag[inext];
-
   jtag = tag[j];
 
   // change 1st special neighbors of affected atoms: i,j,inext,jnext
