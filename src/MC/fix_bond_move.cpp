@@ -416,9 +416,9 @@ void FixBondMove::post_integrate()
       num_bond[inext]--;
     }
 
-      error->warning(FLERR,std::to_string(x[j]));
-      error->warning(FLERR,std::to_string(y[j]));
-      error->warning(FLERR,std::to_string(z[j]));
+      // error->warning(FLERR,std::to_string(x[j]));
+      // error->warning(FLERR,std::to_string(y[j]));
+      // error->warning(FLERR,std::to_string(z[j]));
       error->warning(FLERR,std::to_string(num_bond[j]));
       for (int testindex = 0; testindex < num_bond[j]; testindex++){
         error->warning(FLERR,std::to_string(bond_atom[j][testindex]));
@@ -429,6 +429,7 @@ void FixBondMove::post_integrate()
       bond_type[j][num_bond[j]] = ibondtype;
       num_bond[j]++;
 
+      error->warning(FLERR,std::to_string(num_bond[j]));
       for (int testindex = 0; testindex < num_bond[j]; testindex++){
         error->warning(FLERR,std::to_string(bond_atom[j][testindex]));
         error->warning(FLERR,std::to_string(bond_type[j][testindex]));
