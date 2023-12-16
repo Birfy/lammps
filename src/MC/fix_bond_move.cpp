@@ -310,9 +310,11 @@ void FixBondMove::post_integrate()
           inext &= NEIGHMASK;
           
           if (j == inext) continue;
+          error->warning(FLERR,std::to_string(j));
+          error->warning(FLERR,std::to_string(jnext));
           
           if (inext >= nlocal) continue;
-          // if ((mask[inext] & groupbit) == 0) continue;
+          if ((mask[inext] & groupbit) == 0) continue;
           // if (molecule[i] != molecule[inext]) continue;
 
           bondloc = -1;
@@ -371,7 +373,7 @@ void FixBondMove::post_integrate()
             if (random->uniform() < factor) accept = 1;
           }
 
-          goto done;
+          // goto done;
       }
     }
   }
