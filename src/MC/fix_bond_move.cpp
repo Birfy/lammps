@@ -327,31 +327,31 @@ void FixBondMove::post_integrate()
 
           if (bondloc == -1) continue;
 
-          int findbond = 0;
-          for (ibond = 0; ibond < num_bond[i]; ibond++) {
-            if (bond_atom[i][ibond] == tag[j])
-              findbond = 1;
-          }
-          if (findbond == 1) continue;
+          // int findbond = 0;
+          // for (ibond = 0; ibond < num_bond[i]; ibond++) {
+          //   if (bond_atom[i][ibond] == tag[j])
+          //     findbond = 1;
+          // }
+          // if (findbond == 1) continue;
 
-          findbond = 0;
-          for (ibond = 0; ibond < num_bond[j]; ibond++) {
-            if (bond_atom[j][ibond] == tag[i])
-              findbond = 1;
-          }
-          if (findbond == 1) continue;
+          // findbond = 0;
+          // for (ibond = 0; ibond < num_bond[j]; ibond++) {
+          //   if (bond_atom[j][ibond] == tag[i])
+          //     findbond = 1;
+          // }
+          // if (findbond == 1) continue;
 
-          findbond = 0;
-          for (ibond = 0; ibond < num_bond[inext]; ibond++) {
-            if (bond_atom[inext][ibond] == tag[j])
-              findbond = 1;
-          }
-          
-          for (ibond = 0; ibond < num_bond[j]; ibond++) {
-            if (bond_atom[j][ibond] == tag[inext])
-              findbond = 1;
-          }
-          if (findbond == 0) continue;
+          // findbond = 0;
+          // for (ibond = 0; ibond < num_bond[inext]; ibond++) {
+          //   if (bond_atom[inext][ibond] == tag[j])
+          //     findbond = 1;
+          // }
+
+          // for (ibond = 0; ibond < num_bond[j]; ibond++) {
+          //   if (bond_atom[j][ibond] == tag[inext])
+          //     findbond = 1;
+          // }
+          // if (findbond == 0) continue;
 
           if (dist_rsq(i, inext) >= cutsq) continue;
           if (dist_rsq(i, j) >= cutsq) continue;
