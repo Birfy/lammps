@@ -312,7 +312,7 @@ void FixBondMove::post_integrate()
           if (j == inext) continue;
           
           if (inext >= nlocal) continue;
-          if ((mask[inext] & groupbit) == 0) continue;
+          // if ((mask[inext] & groupbit) == 0) continue;
           // if (molecule[i] != molecule[inext]) continue;
 
           bondloc = -1;
