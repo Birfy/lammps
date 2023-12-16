@@ -299,6 +299,8 @@ void FixBondMove::post_integrate()
 
     neighbor_permutation(jnum);
 
+    error->warning(FLERR,std::to_string(jnum));
+
     for (jj = 0; jj < jnum; jj++) {
       j = jlist[permute[jj]];
       j &= NEIGHMASK;
@@ -310,8 +312,8 @@ void FixBondMove::post_integrate()
           inext &= NEIGHMASK;
           
           if (j == inext) continue;
-          error->warning(FLERR,std::to_string(j));
-          error->warning(FLERR,std::to_string(jnext));
+          // error->warning(FLERR,std::to_string(j));
+          // error->warning(FLERR,std::to_string(jnext));
           
           if (inext >= nlocal) continue;
           if ((mask[inext] & groupbit) == 0) continue;
@@ -327,9 +329,13 @@ void FixBondMove::post_integrate()
               bondloc = 1;
           }
 
-          error->warning(FLERR,std::to_string(bondloc));
+          
+
+          
 
           if (bondloc == -1) continue;
+
+          error->warning(FLERR,std::to_string(bondloc));
 
           // int findbond = 0;
           // for (ibond = 0; ibond < num_bond[i]; ibond++) {
