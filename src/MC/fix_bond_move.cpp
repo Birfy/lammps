@@ -299,92 +299,39 @@ void FixBondMove::post_integrate()
 
     neighbor_permutation(jnum);
 
-    // error->warning(FLERR,std::to_string(jnum));
+    for (ibond = 0; ibond < num_bond[i]; ibond++) {
+      inext = atom->map(bond_atom[i][ibond]);
+      if (inext >= nlocal || inext < 0) continue;
+      if ((mask[inext] & groupbit) == 0) continue;
+      ibondtype = bond_type[i][ibond];
 
-    for (jj = 0; jj < jnum; jj++) {
-      j = jlist[permute[jj]];
-      j &= NEIGHMASK;
-      if (j >= nlocal) continue;
-      if ((mask[j] & groupbit) == 0) continue;
+      if (ibondtype != tbondtype) continue;
+      
+      for (jj = 0; jj < jnum; jj++) {
+        j = jlist[permute[jj]];
+        j &= NEIGHMASK;
+        if (j >= nlocal) continue;
+        if ((mask[j] & groupbit) == 0) continue;
 
-      for (kk = 0; kk < jnum; kk++) {
-          inext = jlist[permute[kk]];
-          inext &= NEIGHMASK;
-          
-          if (j == inext) continue;
-          // error->warning(FLERR,std::to_string(j));
-          // error->warning(FLERR,std::to_string(jnext));
-          
-          if (inext >= nlocal) continue;
-          if ((mask[inext] & groupbit) == 0) continue;
-          // if (molecule[i] != molecule[inext]) continue;
+        int findbond = 0;
+        for (ibond = 0; ibond < num_bond[j]; ibond++) {
+          if (bond_atom[j][ibond] == tag[inext])
+            findbond = 1;
+        }
+        for (ibond = 0; ibond < num_bond[inext]; ibond++) {
+          if (bond_atom[inext][ibond] == tag[j])
+            findbond = 1;
+        }
 
-          bondloc = -1;
-          for (ibond = 0; ibond < num_bond[i]; ibond++) {
-            if (bond_atom[i][ibond] == tag[inext])
-              bondloc = 0;
-          }
-          for (ibond = 0; ibond < num_bond[inext]; ibond++) {
-            if (bond_atom[inext][ibond] == tag[i])
-              bondloc = 1;
-          }
-
-          
-
-          
-
-          if (bondloc == -1) continue;
-
-          error->warning(FLERR,std::to_string(bondloc));
-
-          // int findbond = 0;
-          // for (ibond = 0; ibond < num_bond[i]; ibond++) {
-          //   if (bond_atom[i][ibond] == tag[j])
-          //     findbond = 1;
-          // }
-          // if (findbond == 1) continue;
-
-          // findbond = 0;
-          // for (ibond = 0; ibond < num_bond[j]; ibond++) {
-          //   if (bond_atom[j][ibond] == tag[i])
-          //     findbond = 1;
-          // }
-          // if (findbond == 1) continue;
-
-          // findbond = 0;
-          // for (ibond = 0; ibond < num_bond[inext]; ibond++) {
-          //   if (bond_atom[inext][ibond] == tag[j])
-          //     findbond = 1;
-          // }
-
-          // for (ibond = 0; ibond < num_bond[j]; ibond++) {
-          //   if (bond_atom[j][ibond] == tag[inext])
-          //     findbond = 1;
-          // }
-          // if (findbond == 0) continue;
-
-          if (dist_rsq(i, inext) >= cutsq) continue;
-          if (dist_rsq(i, j) >= cutsq) continue;
-          if (dist_rsq(j, inext) >= cutsq) continue;
-
-          threesome++;
-
-          delta = pair_eng(i, inext) - pair_eng(i, j);
-          delta += bond_eng(ibondtype, i, j) - bond_eng(ibondtype, i, inext);
-
-
-          if (delta < 0.0) accept = 1;
-          else {
-            factor = exp(-delta/force->boltz/t_current);
-            if (random->uniform() < factor) accept = 1;
-          }
-
-          // goto done;
+        if (findbond == 1) 
+          goto first;
+      }
       }
     }
-  }
 
- done:
+  
+
+ first:
 
   // trigger immediate reneighboring if swaps occurred on one or more procs
 
@@ -443,78 +390,6 @@ void FixBondMove::post_integrate()
     }
   }
 
-  
-
-//     error->warning(FLERR,"Attemping to move the following bonds");
-//   error->warning(FLERR,std::to_string(i));
-//   error->warning(FLERR,std::to_string(num_bond[i]));
-//   error->warning(FLERR,std::to_string(bond_atom[i][0]));
-//   error->warning(FLERR,std::to_string(inext));
-//   error->warning(FLERR,std::to_string(num_bond[inext]));
-//   error->warning(FLERR,std::to_string(bond_atom[inext][0]));
-//   error->warning(FLERR,std::to_string(j));
-//   error->warning(FLERR,std::to_string(num_bond[j]));
-//   error->warning(FLERR,std::to_string(bond_atom[j][0]));
-//   for (jbond = 0; jbond < num_bond[inext]; jbond++)
-//     if (bond_atom[inext][jbond] == tag[i]) {
-//       for (jjnext = jbond; jjnext < num_bond[inext] - 1; jjnext++){
-//         bond_atom[inext][jjnext] = bond_atom[inext][jjnext+1];
-//         bond_type[inext][jjnext] = bond_type[inext][jjnext+1];
-//       }
-      
-//       // if (n_histories > 0)
-//       //   for (auto &ihistory: histories)
-//       //     dynamic_cast<FixBondHistory *>(ihistory)->delete_history(inext,jbond);
-
-//       num_bond[inext]--;
-//     }
-
-// error->warning(FLERR,"Attemping to move the following bonds");
-//  error->warning(FLERR,std::to_string(i));
-//   error->warning(FLERR,std::to_string(num_bond[i]));
-//   error->warning(FLERR,std::to_string(bond_atom[i][0]));
-//   error->warning(FLERR,std::to_string(inext));
-//   error->warning(FLERR,std::to_string(num_bond[inext]));
-//   error->warning(FLERR,std::to_string(bond_atom[inext][0]));
-//   error->warning(FLERR,std::to_string(j));
-//   error->warning(FLERR,std::to_string(num_bond[j]));
-//   error->warning(FLERR,std::to_string(bond_atom[j][0]));
-
-    
-    // error->warning(FLERR,"Attemping to move the following bonds");
-    //   error->warning(FLERR,std::to_string(i));
-    //   error->warning(FLERR,std::to_string(inext));
-    //   error->warning(FLERR,std::to_string(j));
-      // error->warning(FLERR,std::to_string(x[j]));
-      // error->warning(FLERR,std::to_string(y[j]));
-      // error->warning(FLERR,std::to_string(z[j]));
-      // error->warning(FLERR,std::to_string(num_bond[j]));
-      // for (int testindex = 0; testindex < num_bond[j]; testindex++){
-      //   error->warning(FLERR,std::to_string(bond_atom[j][testindex]));
-      //   error->warning(FLERR,std::to_string(bond_type[j][testindex]));
-      // }
-
-  //     bond_atom[j][num_bond[j]] = tag[i];
-  //     bond_type[j][num_bond[j]] = ibondtype;
-  //     num_bond[j]++;
-
-  //     error->warning(FLERR,"Attemping to move the following bonds");
-  // error->warning(FLERR,std::to_string(i));
-  // error->warning(FLERR,std::to_string(num_bond[i]));
-  // error->warning(FLERR,std::to_string(inext));
-  // error->warning(FLERR,std::to_string(num_bond[inext]));
-  // error->warning(FLERR,std::to_string(j));
-  // error->warning(FLERR,std::to_string(num_bond[j]));
-
-      // error->warning(FLERR,std::to_string(num_bond[j]));
-      // for (int testindex = 0; testindex < num_bond[j]; testindex++){
-      //   error->warning(FLERR,std::to_string(bond_atom[j][testindex]));
-      //   error->warning(FLERR,std::to_string(bond_type[j][testindex]));
-      // }
-    // }
-
-  // set global tags of 4 atoms in bonds
-
   itag = tag[i];
   inexttag = tag[inext];
   jtag = tag[j];
@@ -538,10 +413,7 @@ void FixBondMove::post_integrate()
         special[inext][iii] = special[inext][iii+1];
       nspecial[inext][0]--;
     }
-    
-  
 }
-
 /* ---------------------------------------------------------------------- */
 
 int FixBondMove::modify_param(int narg, char **arg)
