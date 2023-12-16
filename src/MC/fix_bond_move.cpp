@@ -299,7 +299,7 @@ void FixBondMove::post_integrate()
 
     neighbor_permutation(jnum);
 
-    error->warning(FLERR,std::to_string(jnum));
+    // error->warning(FLERR,std::to_string(jnum));
 
     for (jj = 0; jj < jnum; jj++) {
       j = jlist[permute[jj]];
