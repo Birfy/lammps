@@ -311,21 +311,21 @@ void FixBondMove::post_integrate()
           
           if (j == inext) continue;
           
-          if (inext >= nlocal) continue;
-          if ((mask[inext] & groupbit) == 0) continue;
-          // if (molecule[i] != molecule[inext]) continue;
+          // if (inext >= nlocal) continue;
+          // if ((mask[inext] & groupbit) == 0) continue;
+          // // if (molecule[i] != molecule[inext]) continue;
 
-          bondloc = -1;
-          for (ibond = 0; ibond < num_bond[i]; ibond++) {
-            if (bond_atom[i][ibond] == tag[inext])
-              bondloc = 0;
-          }
-          for (ibond = 0; ibond < num_bond[inext]; ibond++) {
-            if (bond_atom[inext][ibond] == tag[i])
-              bondloc = 1;
-          }
+          // bondloc = -1;
+          // for (ibond = 0; ibond < num_bond[i]; ibond++) {
+          //   if (bond_atom[i][ibond] == tag[inext])
+          //     bondloc = 0;
+          // }
+          // for (ibond = 0; ibond < num_bond[inext]; ibond++) {
+          //   if (bond_atom[inext][ibond] == tag[i])
+          //     bondloc = 1;
+          // }
 
-          if (bondloc == -1) continue;
+          // if (bondloc == -1) continue;
 
           // int findbond = 0;
           // for (ibond = 0; ibond < num_bond[i]; ibond++) {
